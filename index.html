@@ -20,10 +20,33 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            /* Default Background: Soft Gradient */
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out; /* Smooth transition for photos */
             color: #5d4037;
             overflow: hidden;
             position: relative;
+        }
+
+        /* Dark overlay to make text readable if background is bright */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2); /* Slight dark tint over photos */
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        body.has-photo::before {
+            opacity: 1; /* Show tint when photo is active */
         }
 
         .heart-bg {
@@ -42,10 +65,11 @@
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.85);
+            /* White glass effect - ensures text is readable over photos */
+            background: rgba(255, 255, 255, 0.90); 
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
             z-index: 10;
             max-width: 90%;
@@ -58,7 +82,6 @@
             border-radius: 15px;
             margin-bottom: 20px;
             animation: bounce 2s infinite ease-in-out;
-            object-fit: cover; /* Keeps your photos looking good */
         }
 
         @keyframes bounce {
@@ -108,7 +131,6 @@
             box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
         }
 
-        /* Full Screen Button Style */
         .yes-button.full-screen {
             position: fixed;
             top: 0;
@@ -144,7 +166,6 @@
             background-color: #6d4c41;
         }
 
-        /* Music Controls */
         .music-controls {
             position: absolute;
             top: 20px;
@@ -153,7 +174,7 @@
             align-items: center;
             gap: 10px;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
             padding: 5px 15px;
             border-radius: 50px;
         }
@@ -182,7 +203,7 @@
 
     <div class="music-controls">
         <button class="music-toggle" onclick="toggleMusic()">🎵</button>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.2" oninput="adjustVolume(this.value)">
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.15" oninput="adjustVolume(this.value)">
     </div>
 
     <div class="container">
@@ -207,7 +228,6 @@
             "I'm gonna cry..."
         ];
 
-        // This array holds your 5 photos
         const images = [
             "us1.jpg",
             "us2.jpg",
@@ -219,41 +239,39 @@
         let messageIndex = 0;
         let noClickCount = 0;
 
-        // Set Volume to 20% on load
+        // Set Volume to 15% on load
         window.onload = function() {
             const music = document.getElementById('bgMusic');
-            music.volume = 0.2; // 20% volume
+            music.volume = 0.15;
         };
 
         function handleNoClick() {
             const noButton = document.querySelector('.no-button');
             const yesButton = document.querySelector('.yes-button');
-            const mainImage = document.getElementById('mainImage');
 
             noClickCount++;
 
-            // Change image based on click count (us1.jpg for 1st click, etc.)
-            // We use (noClickCount - 1) because arrays start at 0
+            // CHANGE BACKGROUND IMAGE on click
             if (noClickCount <= 5) {
-                mainImage.src = images[noClickCount - 1];
+                const imageName = images[noClickCount - 1];
+                document.body.style.backgroundImage = `url('${imageName}')`;
+                document.body.classList.add('has-photo'); // Adds dark tint
             }
 
             if (noClickCount >= 5) {
-                // Hide No Button
                 noButton.style.display = 'none';
                 
-                // Move YES button outside container to fix centering
+                // Move YES button outside to body for full screen
                 document.body.appendChild(yesButton);
                 
                 yesButton.classList.add('full-screen');
                 yesButton.innerHTML = "OKAY SAY<br>YES NOW! ❤️";
                 
                 document.getElementById('question').innerText = "There is no escape! 😈";
-                
                 return;
             }
 
-            // Normal text change logic
+            // Normal text change
             messageIndex = (messageIndex + 1) % messages.length;
             noButton.textContent = messages[messageIndex];
 
@@ -271,13 +289,12 @@
                 colors: ['#ff4081', '#ff80ab', '#ffc107']
             });
 
-            // Remove the floating button
+            // Remove full screen button if exists
             const yesButton = document.querySelector('.yes-button');
             if (yesButton) {
                 yesButton.remove();
             }
 
-            // Show Success Screen (Still using the bear kiss gif as requested)
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63;">I knew you would say yes! ❤️</h1>
                 <img src="mocha_kiss.gif" style="width: 100%; max-width: 300px; border-radius: 20px;">
