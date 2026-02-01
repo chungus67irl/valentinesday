@@ -22,7 +22,7 @@
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             color: #5d4037;
-            overflow: hidden; /* Keeps the hearts contained */
+            overflow: hidden;
             position: relative;
         }
 
@@ -58,6 +58,7 @@
             border-radius: 15px;
             margin-bottom: 20px;
             animation: bounce 2s infinite ease-in-out;
+            object-fit: cover; /* Keeps your photos looking good */
         }
 
         @keyframes bounce {
@@ -107,7 +108,7 @@
             box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
         }
 
-        /* --- FIXED FULL SCREEN STYLES --- */
+        /* Full Screen Button Style */
         .yes-button.full-screen {
             position: fixed;
             top: 0;
@@ -115,10 +116,7 @@
             width: 100vw;
             height: 100vh;
             border-radius: 0;
-            
-            /* Responsive font size so it doesn't overflow */
             font-size: 8vw !important; 
-            
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -146,7 +144,7 @@
             background-color: #6d4c41;
         }
 
-        /* --- Music Controls --- */
+        /* Music Controls */
         .music-controls {
             position: absolute;
             top: 20px;
@@ -168,7 +166,6 @@
             padding: 0;
         }
 
-        /* Volume Slider */
         input[type=range] {
             width: 80px;
             cursor: pointer;
@@ -185,11 +182,12 @@
 
     <div class="music-controls">
         <button class="music-toggle" onclick="toggleMusic()">🎵</button>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" oninput="adjustVolume(this.value)">
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.2" oninput="adjustVolume(this.value)">
     </div>
 
     <div class="container">
         <img id="mainImage" src="mocha_ask.gif" alt="Please?">
+        
         <h1 id="question">Will you be my Valentine?</h1>
         
         <div class="buttons">
@@ -209,40 +207,57 @@
             "I'm gonna cry..."
         ];
 
+        // This array holds your 5 photos
+        const images = [
+            "us1.jpg",
+            "us2.jpg",
+            "us3.jpg",
+            "us4.jpg",
+            "us5.jpg" 
+        ];
+
         let messageIndex = 0;
         let noClickCount = 0;
 
-        // Start volume at 50%
+        // Set Volume to 20% on load
         window.onload = function() {
             const music = document.getElementById('bgMusic');
-            music.volume = 0.5;
+            music.volume = 0.2; // 20% volume
         };
 
         function handleNoClick() {
             const noButton = document.querySelector('.no-button');
             const yesButton = document.querySelector('.yes-button');
+            const mainImage = document.getElementById('mainImage');
 
             noClickCount++;
 
+            // Change image based on click count (us1.jpg for 1st click, etc.)
+            // We use (noClickCount - 1) because arrays start at 0
+            if (noClickCount <= 5) {
+                mainImage.src = images[noClickCount - 1];
+            }
+
             if (noClickCount >= 5) {
-                // 1. Hide No Button
+                // Hide No Button
                 noButton.style.display = 'none';
                 
-                // 2. CRITICAL FIX: Move the YES button outside the container
-                // This forces it to be full screen on the BODY, not trapped in the card
+                // Move YES button outside container to fix centering
                 document.body.appendChild(yesButton);
                 
-                // 3. Apply full screen style
                 yesButton.classList.add('full-screen');
                 yesButton.innerHTML = "OKAY SAY<br>YES NOW! ❤️";
                 
                 document.getElementById('question').innerText = "There is no escape! 😈";
+                
                 return;
             }
 
+            // Normal text change logic
             messageIndex = (messageIndex + 1) % messages.length;
             noButton.textContent = messages[messageIndex];
 
+            // Grow Yes button
             const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
             const newSize = currentSize * 1.5;
             yesButton.style.fontSize = `${newSize}px`;
@@ -256,13 +271,13 @@
                 colors: ['#ff4081', '#ff80ab', '#ffc107']
             });
 
-            // Remove the floating full-screen button if it exists
+            // Remove the floating button
             const yesButton = document.querySelector('.yes-button');
             if (yesButton) {
                 yesButton.remove();
             }
 
-            // Show success message
+            // Show Success Screen (Still using the bear kiss gif as requested)
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63;">I knew you would say yes! ❤️</h1>
                 <img src="mocha_kiss.gif" style="width: 100%; max-width: 300px; border-radius: 20px;">
