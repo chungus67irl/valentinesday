@@ -22,7 +22,7 @@
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             color: #5d4037;
-            overflow: hidden;
+            overflow: hidden; /* Keeps the hearts contained */
             position: relative;
         }
 
@@ -107,6 +107,7 @@
             box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
         }
 
+        /* --- FIXED FULL SCREEN STYLES --- */
         .yes-button.full-screen {
             position: fixed;
             top: 0;
@@ -114,7 +115,10 @@
             width: 100vw;
             height: 100vh;
             border-radius: 0;
+            
+            /* Responsive font size so it doesn't overflow */
             font-size: 8vw !important; 
+            
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -142,7 +146,7 @@
             background-color: #6d4c41;
         }
 
-        /* --- Music Controls Container --- */
+        /* --- Music Controls --- */
         .music-controls {
             position: absolute;
             top: 20px;
@@ -164,7 +168,7 @@
             padding: 0;
         }
 
-        /* Custom Volume Slider */
+        /* Volume Slider */
         input[type=range] {
             width: 80px;
             cursor: pointer;
@@ -186,7 +190,6 @@
 
     <div class="container">
         <img id="mainImage" src="mocha_ask.gif" alt="Please?">
-        
         <h1 id="question">Will you be my Valentine?</h1>
         
         <div class="buttons">
@@ -209,10 +212,10 @@
         let messageIndex = 0;
         let noClickCount = 0;
 
-        // --- Set Default Volume on Load ---
+        // Start volume at 50%
         window.onload = function() {
             const music = document.getElementById('bgMusic');
-            music.volume = 0.5; // Set to 50%
+            music.volume = 0.5;
         };
 
         function handleNoClick() {
@@ -222,9 +225,17 @@
             noClickCount++;
 
             if (noClickCount >= 5) {
+                // 1. Hide No Button
                 noButton.style.display = 'none';
+                
+                // 2. CRITICAL FIX: Move the YES button outside the container
+                // This forces it to be full screen on the BODY, not trapped in the card
+                document.body.appendChild(yesButton);
+                
+                // 3. Apply full screen style
                 yesButton.classList.add('full-screen');
                 yesButton.innerHTML = "OKAY SAY<br>YES NOW! ❤️";
+                
                 document.getElementById('question').innerText = "There is no escape! 😈";
                 return;
             }
@@ -245,10 +256,16 @@
                 colors: ['#ff4081', '#ff80ab', '#ffc107']
             });
 
+            // Remove the floating full-screen button if it exists
+            const yesButton = document.querySelector('.yes-button');
+            if (yesButton) {
+                yesButton.remove();
+            }
+
+            // Show success message
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63;">I knew you would say yes! ❤️</h1>
                 <img src="mocha_kiss.gif" style="width: 100%; max-width: 300px; border-radius: 20px;">
-                
                 <p style="font-size: 1.2rem; margin-top: 10px; color: #5d4037;">You are the best Valentine ever!</p>
             `;
             
@@ -284,7 +301,6 @@
             }
         }
 
-        // --- Volume Slider Logic ---
         function adjustVolume(volume) {
             const music = document.getElementById('bgMusic');
             music.volume = volume;
