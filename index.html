@@ -20,9 +20,8 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            /* Soft Pink Gradient for Milk & Mocha Vibe */
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            color: #5d4037; /* Mocha Brown Text */
+            color: #5d4037;
             overflow: hidden;
             position: relative;
         }
@@ -58,7 +57,6 @@
             height: auto;
             border-radius: 15px;
             margin-bottom: 20px;
-            /* Cute bouncing animation */
             animation: bounce 2s infinite ease-in-out;
         }
 
@@ -109,7 +107,6 @@
             box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
         }
 
-        /* FULL SCREEN YES BUTTON STYLE */
         .yes-button.full-screen {
             position: fixed;
             top: 0;
@@ -117,12 +114,16 @@
             width: 100vw;
             height: 100vh;
             border-radius: 0;
-            font-size: 5rem !important;
+            font-size: 8vw !important; 
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             animation: pulse 1s infinite;
+            text-align: center;
+            white-space: normal;
+            padding: 20px; 
+            box-sizing: border-box;
         }
 
         @keyframes pulse {
@@ -132,7 +133,7 @@
         }
 
         .no-button {
-            background-color: #8d6e63; /* Mocha Brown */
+            background-color: #8d6e63;
             color: white;
             font-size: 18px;
         }
@@ -141,17 +142,32 @@
             background-color: #6d4c41;
         }
 
-        .music-toggle {
+        /* --- Music Controls Container --- */
+        .music-controls {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.5);
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             z-index: 100;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+
+        .music-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
             font-size: 1.5rem;
+            padding: 0;
+        }
+
+        /* Custom Volume Slider */
+        input[type=range] {
+            width: 80px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -163,7 +179,10 @@
         <source src="whiplash.mp3" type="audio/mpeg">
     </audio>
 
-    <button class="music-toggle" onclick="toggleMusic()">🎵</button>
+    <div class="music-controls">
+        <button class="music-toggle" onclick="toggleMusic()">🎵</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" oninput="adjustVolume(this.value)">
+    </div>
 
     <div class="container">
         <img id="mainImage" src="mocha_ask.gif" alt="Please?">
@@ -179,7 +198,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        // These are the messages for the 5 clicks
         const messages = [
             "No",
             "Are you sure?",
@@ -191,24 +209,26 @@
         let messageIndex = 0;
         let noClickCount = 0;
 
+        // --- Set Default Volume on Load ---
+        window.onload = function() {
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.5; // Set to 50%
+        };
+
         function handleNoClick() {
             const noButton = document.querySelector('.no-button');
             const yesButton = document.querySelector('.yes-button');
 
             noClickCount++;
 
-            // 5th Click Logic: REMOVE NO BUTTON, MAXIMIZE YES BUTTON
             if (noClickCount >= 5) {
-                noButton.style.display = 'none'; // Bye bye no button
-                
+                noButton.style.display = 'none';
                 yesButton.classList.add('full-screen');
-                yesButton.innerText = "OKAY SAY YES NOW! ❤️";
-                
+                yesButton.innerHTML = "OKAY SAY<br>YES NOW! ❤️";
                 document.getElementById('question').innerText = "There is no escape! 😈";
                 return;
             }
 
-            // Normal Logic: Change Text and Grow
             messageIndex = (messageIndex + 1) % messages.length;
             noButton.textContent = messages[messageIndex];
 
@@ -225,16 +245,13 @@
                 colors: ['#ff4081', '#ff80ab', '#ffc107']
             });
 
-            // FINAL SUCCESS SCREEN
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63;">I knew you would say yes! ❤️</h1>
-                
                 <img src="mocha_kiss.gif" style="width: 100%; max-width: 300px; border-radius: 20px;">
                 
-                <p style="font-size: 1.2rem; margin-top: 10px; color: #5d4037;">(Best Valentine ever!)</p>
+                <p style="font-size: 1.2rem; margin-top: 10px; color: #5d4037;">You are the best Valentine ever!</p>
             `;
             
-            // Try to auto-play music if not already playing
             const music = document.getElementById('bgMusic');
             if (music.paused) {
                 music.play().catch(e => console.log("Auto-play blocked"));
@@ -242,7 +259,6 @@
             }
         }
 
-        // --- Hearts Background ---
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart-bg');
@@ -256,7 +272,6 @@
         }
         setInterval(createHeart, 300);
 
-        // --- Music Toggle ---
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
             const btn = document.querySelector('.music-toggle');
@@ -267,6 +282,12 @@
                 music.pause();
                 btn.textContent = '🎵';
             }
+        }
+
+        // --- Volume Slider Logic ---
+        function adjustVolume(volume) {
+            const music = document.getElementById('bgMusic');
+            music.volume = volume;
         }
     </script>
 </body>
