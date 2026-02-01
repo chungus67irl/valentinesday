@@ -21,13 +21,10 @@
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            background-size: cover;
-            background-position: center; /* Default center alignment */
+            background-size: cover; 
+            background-position: center;
             background-repeat: no-repeat;
-            
-            /* Smoothly transition the photo AND the position shift */
-            transition: background-image 0.5s ease-in-out, background-position 0.5s ease-in-out;
-            
+            transition: background-image 0.5s ease-in-out;
             color: #5d4037;
             overflow: hidden;
             position: relative;
@@ -255,16 +252,14 @@
                 document.body.style.backgroundImage = `url('${imageName}')`;
                 document.body.classList.add('has-photo');
                 
-                // === ALIGNMENT FIX START ===
-                // If it is the 3rd click (The "Look at this face" photo - us3.jpg),
-                // align the background to the TOP so faces aren't cut off.
-                if (noClickCount === 3) {
-                    document.body.style.backgroundPosition = "center top";
+                // === ZOOM OUT LOGIC FOR PHOTO 2 AND 5 ===
+                if (noClickCount === 2 || noClickCount === 5) {
+                    // "Contain" makes sure the WHOLE photo fits on screen
+                    document.body.style.backgroundSize = "contain";
                 } else {
-                    // For all other photos, keep it centered
-                    document.body.style.backgroundPosition = "center center";
+                    // "Cover" fills the whole screen (might crop edges)
+                    document.body.style.backgroundSize = "cover";
                 }
-                // === ALIGNMENT FIX END ===
             }
 
             if (noClickCount >= 5) {
