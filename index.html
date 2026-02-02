@@ -20,32 +20,11 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            /* Soft Pink Gradient for Milk & Mocha Vibe */
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            /* Ensures photos cover the whole screen */
-            background-size: cover; 
-            background-position: center;
-            background-repeat: no-repeat;
-            transition: background-image 0.5s ease-in-out;
-            color: #5d4037;
+            color: #5d4037; /* Mocha Brown Text */
             overflow: hidden;
             position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        body.has-photo::before {
-            opacity: 1;
         }
 
         .heart-bg {
@@ -64,10 +43,10 @@
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.90); 
+            background: rgba(255, 255, 255, 0.85);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
             z-index: 10;
             max-width: 90%;
@@ -79,6 +58,7 @@
             height: auto;
             border-radius: 15px;
             margin-bottom: 20px;
+            /* Cute bouncing animation */
             animation: bounce 2s infinite ease-in-out;
         }
 
@@ -129,6 +109,7 @@
             box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
         }
 
+        /* FULL SCREEN YES BUTTON STYLE */
         .yes-button.full-screen {
             position: fixed;
             top: 0;
@@ -136,16 +117,12 @@
             width: 100vw;
             height: 100vh;
             border-radius: 0;
-            font-size: 8vw !important; 
+            font-size: 5rem !important;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             animation: pulse 1s infinite;
-            text-align: center;
-            white-space: normal;
-            padding: 20px; 
-            box-sizing: border-box;
         }
 
         @keyframes pulse {
@@ -155,7 +132,7 @@
         }
 
         .no-button {
-            background-color: #8d6e63;
+            background-color: #8d6e63; /* Mocha Brown */
             color: white;
             font-size: 18px;
         }
@@ -164,30 +141,17 @@
             background-color: #6d4c41;
         }
 
-        .music-controls {
+        .music-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 5px 15px;
-            border-radius: 50px;
-        }
-
-        .music-toggle {
-            background: none;
+            background: rgba(255, 255, 255, 0.5);
             border: none;
+            padding: 10px;
+            border-radius: 50%;
             cursor: pointer;
+            z-index: 100;
             font-size: 1.5rem;
-            padding: 0;
-        }
-
-        input[type=range] {
-            width: 80px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -199,10 +163,7 @@
         <source src="whiplash.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="music-controls">
-        <button class="music-toggle" onclick="toggleMusic()">🎵</button>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.15" oninput="adjustVolume(this.value)">
-    </div>
+    <button class="music-toggle" onclick="toggleMusic()">🎵</button>
 
     <div class="container">
         <img id="mainImage" src="mocha_ask.gif" alt="Please?">
@@ -218,6 +179,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
+        // These are the messages for the 5 clicks
         const messages = [
             "No",
             "Are you sure?",
@@ -226,21 +188,8 @@
             "I'm gonna cry..."
         ];
 
-        const images = [
-            "us1.jpg",
-            "us2.jpg",
-            "us3.jpg",
-            "us4.jpg",
-            "us5.jpg" 
-        ];
-
         let messageIndex = 0;
         let noClickCount = 0;
-
-        window.onload = function() {
-            const music = document.getElementById('bgMusic');
-            music.volume = 0.15;
-        };
 
         function handleNoClick() {
             const noButton = document.querySelector('.no-button');
@@ -248,21 +197,18 @@
 
             noClickCount++;
 
-            if (noClickCount <= 5) {
-                const imageName = images[noClickCount - 1];
-                document.body.style.backgroundImage = `url('${imageName}')`;
-                document.body.classList.add('has-photo');
-            }
-
+            // 5th Click Logic: REMOVE NO BUTTON, MAXIMIZE YES BUTTON
             if (noClickCount >= 5) {
-                noButton.style.display = 'none';
-                document.body.appendChild(yesButton);
+                noButton.style.display = 'none'; // Bye bye no button
+                
                 yesButton.classList.add('full-screen');
-                yesButton.innerHTML = "OKAY SAY<br>YES NOW! ❤️";
+                yesButton.innerText = "OKAY SAY YES NOW! ❤️";
+                
                 document.getElementById('question').innerText = "There is no escape! 😈";
                 return;
             }
 
+            // Normal Logic: Change Text and Grow
             messageIndex = (messageIndex + 1) % messages.length;
             noButton.textContent = messages[messageIndex];
 
@@ -279,17 +225,16 @@
                 colors: ['#ff4081', '#ff80ab', '#ffc107']
             });
 
-            const yesButton = document.querySelector('.yes-button');
-            if (yesButton) {
-                yesButton.remove();
-            }
-
+            // FINAL SUCCESS SCREEN
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63;">I knew you would say yes! ❤️</h1>
+                
                 <img src="mocha_kiss.gif" style="width: 100%; max-width: 300px; border-radius: 20px;">
-                <p style="font-size: 1.2rem; margin-top: 10px; color: #5d4037;">You are the best Valentine ever!</p>
+                
+                <p style="font-size: 1.2rem; margin-top: 10px; color: #5d4037;">(Best Valentine ever!)</p>
             `;
             
+            // Try to auto-play music if not already playing
             const music = document.getElementById('bgMusic');
             if (music.paused) {
                 music.play().catch(e => console.log("Auto-play blocked"));
@@ -297,6 +242,7 @@
             }
         }
 
+        // --- Hearts Background ---
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart-bg');
@@ -310,6 +256,7 @@
         }
         setInterval(createHeart, 300);
 
+        // --- Music Toggle ---
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
             const btn = document.querySelector('.music-toggle');
@@ -320,11 +267,6 @@
                 music.pause();
                 btn.textContent = '🎵';
             }
-        }
-
-        function adjustVolume(volume) {
-            const music = document.getElementById('bgMusic');
-            music.volume = volume;
         }
     </script>
 </body>
