@@ -23,14 +23,15 @@
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             
-            /* Default background settings */
+            /* Background Settings */
             background-size: cover; 
             background-position: center center;
             background-repeat: no-repeat;
+            background-attachment: fixed; /* Keeps background still while scrolling */
             
             transition: background-image 0.5s ease-in-out, background-position 0.5s ease-in-out, background-size 0.5s ease-in-out, justify-content 0.5s ease, padding 0.5s ease;
             color: #5d4037;
-            overflow: hidden;
+            overflow: hidden; /* Starts hidden, we enable scrolling later */
             position: relative;
         }
 
@@ -74,8 +75,6 @@
             backdrop-filter: blur(8px);
             z-index: 10;
             max-width: 90%;
-            /* Allow the container itself to grow if needed */
-            max-height: 90vh; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -198,20 +197,18 @@
             cursor: pointer;
         }
 
-        /* === NEW FANCY LETTER STYLES === */
+        /* === FANCY LETTER STYLES === */
         .letter-box {
             margin-top: 20px;
             width: 100%;
-            max-width: 400px;
-            /* Scrollable Settings */
-            max-height: 200px; 
-            overflow-y: auto; 
+            max-width: 450px;
+            /* No max-height here so it grows with the text */
             
             /* Visuals: Parchment & Gold */
             background: #fff9e6; 
             border: 3px double #d4af37; 
             border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
             box-sizing: border-box;
             
             /* Typography */
@@ -231,22 +228,9 @@
         }
         
         .letter-text span.fancy {
-            font-family: 'Great Vibes', cursive; /* Fancy script for names/love */
-            font-size: 1.4rem;
+            font-family: 'Great Vibes', cursive; /* Fancy script for names */
+            font-size: 1.8rem;
             color: #d81b60;
-        }
-
-        /* Custom Gold Scrollbar */
-        .letter-box::-webkit-scrollbar {
-            width: 8px;
-        }
-        .letter-box::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 4px;
-        }
-        .letter-box::-webkit-scrollbar-thumb {
-            background: #d4af37; 
-            border-radius: 4px;
         }
     </style>
 </head>
@@ -312,10 +296,11 @@
                 document.body.style.backgroundImage = `url('${imageName}')`;
                 document.body.classList.add('has-photo');
 
-                // Logic for Slide 5
+                // === LOGIC FOR SLIDE 5 (KEEP THE BOX ON THE RIGHT) ===
                 if (noClickCount === 5) {
                     document.body.style.backgroundSize = "contain";
                     document.body.style.backgroundPosition = "center center";
+                    // Move box to right
                     document.body.style.justifyContent = "flex-end"; 
                     document.body.style.paddingRight = "5vw";       
                 } else {
@@ -356,12 +341,14 @@
                 yesButton.remove();
             }
 
-            // === RESET LAYOUT TO CENTER FOR THE LETTER ===
-            document.body.style.justifyContent = "center";
-            document.body.style.paddingRight = "0";
+            // === ENABLE SCROLLING & FIX LAYOUT ===
+            document.body.style.overflow = "auto"; // Enable scrolling
+            document.body.style.alignItems = "flex-start"; // Start from top
+            document.body.style.paddingTop = "50px"; 
+            document.body.style.paddingBottom = "50px";
             
-            // OPTIONAL: Reset background to specific image or keep last one? 
-            // I'll keep the last one, but ensure we are centered.
+            // WE DO NOT RESET JUSTIFY-CONTENT HERE
+            // This keeps the box aligned to the right, exactly as it was.
 
             document.querySelector('.container').innerHTML = `
                 <h1 style="font-size: 3rem; color: #e91e63; font-family: 'Great Vibes', cursive;">Yay!!! ❤️</h1>
