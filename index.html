@@ -24,7 +24,7 @@
             
             /* Default background settings */
             background-size: cover; 
-            background-position: center center; /* Start centered */
+            background-position: center center;
             background-repeat: no-repeat;
             
             transition: background-image 0.5s ease-in-out, background-position 0.5s ease-in-out;
@@ -257,10 +257,10 @@
 
                 // === ALIGNMENT FIX FOR PHOTO 5 ===
                 if (noClickCount === 5) {
-                    // Anchors photo to bottom so the subject isn't cut off
-                    document.body.style.backgroundPosition = "center bottom";
+                    // Set to 80% instead of 'bottom' (100%).
+                    // This shifts the focus point slightly UP.
+                    document.body.style.backgroundPosition = "center 80%";
                 } else {
-                    // All other photos stay centered
                     document.body.style.backgroundPosition = "center center";
                 }
             }
