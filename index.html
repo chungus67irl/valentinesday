@@ -21,11 +21,13 @@
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            /* Ensures photos cover the whole screen */
+            
+            /* Default background settings */
             background-size: cover; 
-            background-position: center;
+            background-position: center center; /* Start centered */
             background-repeat: no-repeat;
-            transition: background-image 0.5s ease-in-out;
+            
+            transition: background-image 0.5s ease-in-out, background-position 0.5s ease-in-out;
             color: #5d4037;
             overflow: hidden;
             position: relative;
@@ -252,6 +254,15 @@
                 const imageName = images[noClickCount - 1];
                 document.body.style.backgroundImage = `url('${imageName}')`;
                 document.body.classList.add('has-photo');
+
+                // === ALIGNMENT FIX FOR PHOTO 5 ===
+                if (noClickCount === 5) {
+                    // Anchors photo to bottom so the subject isn't cut off
+                    document.body.style.backgroundPosition = "center bottom";
+                } else {
+                    // All other photos stay centered
+                    document.body.style.backgroundPosition = "center center";
+                }
             }
 
             if (noClickCount >= 5) {
